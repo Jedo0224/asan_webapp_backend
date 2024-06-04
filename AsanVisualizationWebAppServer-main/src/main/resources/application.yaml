@@ -1,0 +1,17 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  data:
+    mongodb:
+      uri: mongodb://host.docker.internal:27018
+      authentication-database: admin
+      database: asanVisualization
+
+jwt:
+  secret: 56e010f802a604cee43b937a8c989d0a2c50a22503b890a1c0634fc89a9ebe84
+
+
+
+
