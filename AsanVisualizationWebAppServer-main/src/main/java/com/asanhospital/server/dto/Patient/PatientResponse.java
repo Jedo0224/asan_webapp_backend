@@ -134,6 +134,9 @@ public class PatientResponse {
         private String responsiblePersonName; // 담당자 이름
         private LocalDate startDate;            // 환자의 시작일
         private Long remainingDays;            //남은기간
+        private String deviceId;
+        private String deviceName;
+
 
         static public PatientMainInfoDTO toDto(Patient patient) {
             Long remainingDays = null;
@@ -149,6 +152,8 @@ public class PatientResponse {
                 .responsiblePersonName(patient.getResponsiblePersonName())
                 .startDate(patient.getStartDate())
                 .remainingDays(remainingDays)
+                .deviceId(patient.getDeviceId())
+                .deviceName(patient.getDeviceName())
                 .build();
         }
     }
