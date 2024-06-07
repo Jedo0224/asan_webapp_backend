@@ -46,6 +46,10 @@ public class Patient implements UserDetails {
     @NotEmpty
     private String formFactorNumber;      // 폼팩터 넘버
 
+    private String deviceId;
+
+    private String deviceName;
+
     //        // 보호자 정보
     @NotEmpty
     private String guardianName;          // 이름(보호자)

@@ -27,6 +27,8 @@ public class PatientRequest {
         private String username;                  // 성함
         private Gender gender;                // 성별
         private LocalDate dateOfBirth;          // 생년월일
+        private String deviceId;                // 기기아이디
+        private String deviceName;              // 기기종류
         @NotNull
         private String password;              // 비밀번호(전화번호 끝자리)
         @Email(message = "Invalid email format")
@@ -55,6 +57,8 @@ public class PatientRequest {
                     .username(username)
                     .gender(gender)
                     .dateOfBirth(dateOfBirth)
+                    .deviceId(deviceId)
+                    .deviceName(deviceName)
                     .password(encodedPassword)
                     .email(email)
                     .phoneNumber(phoneNumber)
@@ -137,6 +141,8 @@ public class PatientRequest {
         private String responsiblePersonName; //담당자이름
         private int page;                       //페이지
         private int size;                       //사이즈
+        private String deviceId;
+        private String deviceName;
     }
 
     @Builder
