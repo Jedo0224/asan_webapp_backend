@@ -38,8 +38,9 @@ public class ManagerCommandServiceImpl implements ManagerCommandService{
     @Override
     @Transactional
     public Manager createManager(ManagerRequest.CreateManagerDto createManagerDto){
-        organizationRepository.findByOrganizationName(createManagerDto.getOrganization())
-                .orElseThrow(() -> new GeneralException(ErrorStatus._ORGANIZATION_NOT_FOUND));
+        System.out.println("createManagerDto.getOrganization() = " + createManagerDto.getOrganization());
+//        organizationRepository.findByOrganizationName(createManagerDto.getOrganization())
+//                .orElseThrow(() -> new GeneralException(ErrorStatus._ORGANIZATION_NOT_FOUND));
 
         if (managerRepository.existsById(createManagerDto.getManagerId())) {
             throw new GeneralException(ErrorStatus._MEMBER_ALREADY_EXIST);
