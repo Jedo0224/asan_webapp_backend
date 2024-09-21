@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -46,9 +48,15 @@ public class Patient implements UserDetails {
     @NotEmpty
     private String formFactorNumber;      // 폼팩터 넘버
 
-    private String deviceId;
+    @NotEmpty
+    private String deviceId; // 기기 아이디
 
-    private String deviceName;
+    @NotEmpty
+    private String deviceName; // 기기 이름
+
+
+    private Integer disconnectionCount; // 끊긴 연결 수
+
 
     //        // 보호자 정보
     @NotEmpty
@@ -82,6 +90,13 @@ public class Patient implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    public void incrementDisconnectionCount() {
+        if (this.disconnectionCount == null) {
+            this.disconnectionCount = 1;
+        } else {
+            this.disconnectionCount += 1;
+        }
+    }
     public void setCreatedAt(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
     }

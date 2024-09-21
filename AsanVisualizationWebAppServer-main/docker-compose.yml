@@ -7,11 +7,34 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=test
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - SPRING_DATA_MONGODB_URI=mongodb://host.docker.internal:27018
+      - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
+      - SPRING_DATA_MONGODB_DATABASE=asanVisualization
     extra_hosts:
       - host.docker.internal:host-gateway
+    depends_on:
+      - redis
+      - db
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
 
   db:
     image: mongo
     ports:
       - "27018:27017"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

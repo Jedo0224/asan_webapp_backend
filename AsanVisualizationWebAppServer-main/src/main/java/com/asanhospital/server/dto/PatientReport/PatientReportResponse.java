@@ -17,11 +17,13 @@ public class PatientReportResponse {
     @AllArgsConstructor
     public static class PatientReportDTO{
         private String medicalRecordNumber;
+        private String deviceId;
         private List<ReportData> reportDataList;
 
         public static PatientReportDTO toDto(PatientReport patientReport){
             return PatientReportDTO.builder()
                 .medicalRecordNumber(patientReport.getMedicalRecordNumber())
+//                    .deviceId(patientReport.getDeviceId())
                 .reportDataList(patientReport.getReportDataList())
                 .build();
         }

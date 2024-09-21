@@ -19,6 +19,7 @@ public class SensorFileReport {
     @Id
     private Long id;
     private String medicalRecordNumber;
+    private String deviceName;
     private List<SensorData> sensorDataList;
 
     public void setID(Long id) {

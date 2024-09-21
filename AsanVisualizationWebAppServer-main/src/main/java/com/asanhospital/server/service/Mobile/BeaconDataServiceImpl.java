@@ -1,15 +1,82 @@
 package com.asanhospital.server.service.Mobile;
 
 import com.asanhospital.server.domain.BeaconData;
+\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\import com.asanhospital.server.domain.ConnectionLog;
+import com.asanhospital.server.domain.Patient;
 import com.asanhospital.server.dto.Mobile.BeaconDataDTO;
 import com.asanhospital.server.dto.Mobile.BeaconDataRequest;
 import com.asanhospital.server.repository.BeaconDataRepository;
+import com.asanhospital.server.repository.ConnectionLogRepository;
+import com.asanhospital.server.repository.PatientRepository;
 import com.asanhospital.server.service.DatabaseSequence.DatabaseSequenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -18,8 +85,10 @@ import java.util.concurrent.TimeUnit;
 public class BeaconDataServiceImpl implements BeaconDataService {
 
     private final BeaconDataRepository beaconDataRepository;
+    private final PatientRepository patientRepository;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final DatabaseSequenceService sequenceService;;
+    private final DatabaseSequenceService sequenceService;
+    private final ConnectionLogRepository connectionLogRepository;
     private static final String SEQUENCE_NAME = "beacon_data_sequence";
 
 
@@ -42,13 +111,34 @@ public class BeaconDataServiceImpl implements BeaconDataService {
 
     public void beaconCheckByRedis(BeaconDataRequest beaconDataRequest) {
     String deviceName = beaconDataRequest.getDeviceName();
-    String deviceAddress = beaconDataRequest.getDeviceAddress();
 
-    if (deviceName != null && deviceAddress != null) {
-        String key = deviceAddress;
+        Patient patient = patientRepository.findByDeviceName(deviceName);
 
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(key, deviceName, 10, TimeUnit.SECONDS);
+        if (deviceName != null && patient != null ) {
+            Integer disconnectCount = patient.getDisconnectionCount();
+            if (valueOperations.get(deviceName) == null){
+                LocalDateTime localDateTime = LocalDateTime.now();
+
+
+
+                Optional<ConnectionLog> connectionLog = connectionLogRepository.findByMedicalRecordNumber(patient.getMedicalRecordNumber());
+                if(connectionLog.isPresent()){
+                    connectionLog.get().getConnectionLogList().add(localDateTime);
+                    connectionLogRepository.save(connectionLog.get());
+                }
+                else {
+                    ConnectionLog newConnectionLog = ConnectionLog.builder().medicalRecordNumber(patient.getMedicalRecordNumber())
+                            .connectionLogList(new ArrayList<>())
+                            .disconnectionLogList(new ArrayList<>()).build();
+
+                    newConnectionLog.getConnectionLogList().add(localDateTime);
+                    connectionLogRepository.save(newConnectionLog);
+                }
+
+            }
+
+        valueOperations.set(deviceName, disconnectCount.toString(), 60*10, TimeUnit.SECONDS);
         }
     }
 

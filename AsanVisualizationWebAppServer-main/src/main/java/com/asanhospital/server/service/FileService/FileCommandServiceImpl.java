@@ -50,11 +50,11 @@ public class FileCommandServiceImpl implements FileCommandService {
     }
 
     @Override
-    public List<SensorData> saveSensorFileReportData(Manager manager, String medicalRecordNumber, MultipartFile file) {
+    public List<SensorData> saveSensorFileReportData(String medicalRecordNumber, MultipartFile file) {
         // 환자 정보 확인
-        Patient patient = patientRepository.findBymedicalRecordNumberAndOrganization(medicalRecordNumber, manager.getOrganization()).orElse(null);
-        if(patient == null)
-            throw new GeneralException(ErrorStatus._PATIENT_NOT_FOUND);
+//        Patient patient = patientRepository.findBymedicalRecordNumberAndOrganization(medicalRecordNumber, manager.getOrganization()).orElse(null);
+//        if(patient == null)
+//            throw new GeneralException(ErrorStatus._PATIENT_NOT_FOUND);
 
         //파일 확인
         if (file.isEmpty()) {
@@ -70,6 +70,7 @@ public class FileCommandServiceImpl implements FileCommandService {
             reports.add(SensorFileReport.builder()
                 .id(databaseSequenceService.generateSequence(PatientReport.SEQUENCE_NAME))
                 .medicalRecordNumber(medicalRecordNumber)
+//                .deviceName(deviceName)
                 .sensorDataList(new ArrayList<>())
                 .build());
         }
@@ -86,19 +87,21 @@ public class FileCommandServiceImpl implements FileCommandService {
             while((line = reader.readLine()) != null){
                 report = reports.get(idx);
                 allSensorFiles = report.getSensorDataList();
-                if (allSensorFiles.size() >= 10000)
-                {
-                    report.setSensorDataList(allSensorFiles);
-                    sensorFileRepository.save(report);
-                    idx++;
-                    if(idx >= reports.size()){
-                        reports.add(SensorFileReport.builder()
-                            .id(databaseSequenceService.generateSequence(PatientReport.SEQUENCE_NAME))
-                            .medicalRecordNumber(medicalRecordNumber)
-                            .sensorDataList(new ArrayList<>())
-                            .build());
-                    }
-                }
+
+//                if (allSensorFiles.size() >= 10000)
+//                {
+//                    System.out.println("allSensorFiles.size() = " + allSensorFiles.size());
+//                    report.setSensorDataList(allSensorFiles);
+//                    sensorFileRepository.save(report);
+//                    idx++;
+//                    if(idx >= reports.size()){
+//                        reports.add(SensorFileReport.builder()
+//                            .id(databaseSequenceService.generateSequence(PatientReport.SEQUENCE_NAME))
+//                            .medicalRecordNumber(medicalRecordNumber)
+//                            .sensorDataList(new ArrayList<>())
+//                            .build());
+//                    }
+//                }
 
                 String[] datas = line.split(",");
 

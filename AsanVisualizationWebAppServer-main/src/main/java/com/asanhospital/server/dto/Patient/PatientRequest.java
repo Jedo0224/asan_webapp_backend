@@ -37,6 +37,7 @@ public class PatientRequest {
         private String phoneNumber;           // 연락처
         private String address;               // 주소
         private String formFactorNumber;      // 폼팩터 넘버
+        private Integer disconnectionCount = 0;
 
         // 보호자 정보
         private String guardianName;          // 이름(보호자)
@@ -64,6 +65,7 @@ public class PatientRequest {
                     .phoneNumber(phoneNumber)
                     .address(address)
                     .formFactorNumber(formFactorNumber)
+                    .disconnectionCount(disconnectionCount)
                     .guardianName(guardianName)
                     .guardianRelationship(guardianRelationship)
                     .guardianPhoneNumber(guardianPhoneNumber)
@@ -98,7 +100,8 @@ public class PatientRequest {
         @Pattern(regexp = "\\d{3}-\\d{4}-\\d{4}", message = "Phone number must be in the format 000-0000-0000")
         private String phoneNumber;           // 연락처
         private String address;               // 주소
-        private String formFactorNumber;      // 폼팩터 넘버
+        private String formFactorNumber;      // 폼팩터 넘버\
+        private String deviceName;
 
         // 보호자 정보
         private String guardianName;          // 이름(보호자)
@@ -141,8 +144,9 @@ public class PatientRequest {
         private String responsiblePersonName; //담당자이름
         private int page;                       //페이지
         private int size;                       //사이즈
-        private String deviceId;
-        private String deviceName;
+        private String deviceId;    // 기기 id
+        private String deviceName;  // 기기 이름
+        private String disconnectionCount; // 연결 끊김 수
     }
 
     @Builder

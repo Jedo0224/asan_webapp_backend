@@ -13,6 +13,6 @@ public interface PatientRepository extends MongoRepository<Patient, String> {
     Patient findBymedicalRecordNumber(String medicalRecordNumber);
     Optional<Patient> findBymedicalRecordNumberAndOrganization(String medicalRecordNumber, String organization);
     boolean existsByUsername(String username);
-
+    Patient findByDeviceName(String deviceName);
     PatientResponse.PatientDto findByMedicalRecordNumberAndPassword(String medicalRecordNumber, String password);
 }

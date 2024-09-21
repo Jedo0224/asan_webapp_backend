@@ -45,6 +45,10 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/signUp").permitAll()
                                 .requestMatchers("/organization").permitAll()
                                 .requestMatchers("/beacon-data/**").permitAll()  // Allow access to /beacon-data endpoints
+                                .requestMatchers("/sensorFile/**").permitAll()
+                                .requestMatchers("/patient/getPatientList").permitAll()
+                                .requestMatchers("/patient/getConnectionLogList/**").permitAll()
+                                .requestMatchers("/token/**").permitAll()
                                 //Swagger 관련 권한 설정
                                 .requestMatchers(SWAGGER_PERMIT_URL_ARRAY).permitAll()
                                 // USER 권한이 있어야 요청할 수 있음

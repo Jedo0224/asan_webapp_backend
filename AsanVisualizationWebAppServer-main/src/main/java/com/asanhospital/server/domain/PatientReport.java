@@ -21,6 +21,7 @@ public class PatientReport {
     @Id
     private Long id;
     private String medicalRecordNumber;
+    private String deviceName;
     private List<ReportData> reportDataList;
 
     public void setID(Long id) {

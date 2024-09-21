@@ -32,8 +32,10 @@ public class SensorFileRestController {
     private final FileCommandService fileCommandService;
     private final PatientReportCommandService patientReportCommandService;
     private final SensorFileReportRepository sensorFileReportRepository;
+
+
     @PostMapping("/upload")
-    public ApiResponse<PatientReportDTO> uploadCSVFile(@ManagerObject Manager manager, @RequestPart("file") MultipartFile file, @RequestParam String medicalRecordNumber) throws IOException {
+    public ApiResponse<PatientReportDTO> uploadCSVFile( @RequestPart(value = "file", required=false) MultipartFile file,   @RequestPart("medicalRecordNumber") String medicalRecordNumber) throws IOException {
         // temporalSensorFileReport를 먼저 읽는다.
         // 입력받은 파일을 읽고 오늘 이전의 데이터를 temporalSensorFileReport리스트에 추가한다.
         // temporalSensorFileReport를 분석한다.
@@ -41,9 +43,15 @@ public class SensorFileRestController {
         // 입력받은 파일에서 분석된 데이터를 제외하고(오늘의 데이터를)저장한다.
         // 파일 전체는 SensorFileReport에 저장한다. (1만개씩 분할 저장)
 
-        List<SensorData> newDatas = fileCommandService.saveSensorFileReportData(manager, medicalRecordNumber, file);
+        if (medicalRecordNumber != null && medicalRecordNumber.length() > 1
+                && medicalRecordNumber.startsWith("\"") && medicalRecordNumber.endsWith("\"")) {
+            medicalRecordNumber = medicalRecordNumber.substring(1, medicalRecordNumber.length() - 1);
+        }
+
+        List<SensorData> newDatas = fileCommandService.saveSensorFileReportData(medicalRecordNumber, file);
         return ApiResponse.onSuccess(patientReportCommandService.sensorFileToPatientReport(medicalRecordNumber, newDatas));
     }
+
 
     @GetMapping("/getData")
     public ApiResponse<SensorFileResponse.SensorFileDTO> getPatientSensorData(@ManagerObject Manager manager, @RequestParam("medicalRecordNumber") String medicalRecordNumber){

@@ -19,17 +19,11 @@ import com.asanhospital.server.repository.SensorFileReportRepository;
 import com.asanhospital.server.repository.TemporalSensorFileReportRepository;
 import com.asanhospital.server.service.DatabaseSequence.DatabaseSequenceService;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -74,51 +68,77 @@ public class PatientReportCommandServiceImpl implements PatientReportCommandServ
 
     @Override
     public PatientReportDTO sensorFileToPatientReport(String medicalRecordNumber, List<SensorData> datas) {
-        TemporalSensorFileReport sensorFileReport = temporalSensorFileReportRepository.findByMedicalRecordNumber(medicalRecordNumber).orElse(null);
-        if(sensorFileReport == null){
-            sensorFileReport = TemporalSensorFileReport.builder()
-                .id(databaseSequenceService.generateSequence(PatientReport.SEQUENCE_NAME))
-                .medicalRecordNumber(medicalRecordNumber)
-                .sensorDataList(new ArrayList<>())
-                .build();
-        }
+
+//        TemporalSensorFileReport sensorFileReport = temporalSensorFileReportRepository.findByDeviceName(medicalRecordNumber).orElse(null);
+//        if(sensorFileReport == null){
+//            sensorFileReport = TemporalSensorFileReport.builder()
+//                .id(databaseSequenceService.generateSequence(PatientReport.SEQUENCE_NAME))
+//                .medicalRecordNumber(medicalRecordNumber)
+//                .sensorDataList(new ArrayList<>())
+//                .build();
+//        }
 
         PatientReport patientReport = patientReportsRepository.findByMedicalRecordNumber(medicalRecordNumber).orElse(null);
         if(patientReport == null){
             patientReport = PatientReport.builder()
                 .id(databaseSequenceService.generateSequence(PatientReport.SEQUENCE_NAME))
+//                    .deviceName(deviceName)
                 .medicalRecordNumber(medicalRecordNumber)
                 .reportDataList(new ArrayList<>())
                 .build();
         }
 
         //기존에 처리되지 못한 데이터 추
-        List<SensorData> dataList = sensorFileReport.getSensorDataList();
-        dataList.addAll(datas);
+//        List<SensorData> dataList = sensorFileReport.getSensorDataList();
+        List<SensorData> dataList = new ArrayList<>(datas);
+
 
         //리스트를 날짜별로 그룹화
         Map<LocalDate, List<SensorData>> dayGroup = dataList.stream().collect(Collectors.groupingBy(SensorData::getLocalDate));
 
+
+
         List<ReportData> forResult = new ArrayList<>();
         List<ReportData> reportDataList  = patientReport.getReportDataList();
 
-        List<SensorData> remainSensorDataList = new ArrayList<>();
-        for (LocalDate date : dayGroup.keySet()) {
-            if(date.isEqual(LocalDate.now()))
-            {
-                remainSensorDataList.addAll(dayGroup.get(date));
-                continue;
-            }
+//        List<SensorData> remainSensorDataList = new ArrayList<>();
+//        for (LocalDate date : dayGroup.keySet()) {
+////            if(date.isEqual(LocalDate.now()))
+////            {
+////                remainSensorDataList.addAll(dayGroup.get(date));
+////                continue;
+////            }
+//
+//            List<SensorData> sensorDataList = dayGroup.get(date);
+//            ReportData reportData = makeReportDataFromSensorData(date, sensorDataList);
+//            System.out.println("reportData = " + reportData);
+//            reportDataList.add(reportData);
+//            forResult.add(reportData);
+//        }
 
+        for (LocalDate date : dayGroup.keySet()) {
             List<SensorData> sensorDataList = dayGroup.get(date);
             ReportData reportData = makeReportDataFromSensorData(date, sensorDataList);
-            reportDataList.add(reportData);
+
+            // 기존의 같은 날짜에 대한 ReportData를 찾기
+            Optional<ReportData> existingReportDataOpt = reportDataList.stream()
+                    .filter(rd -> rd.getDate().equals(date))
+                    .findFirst();
+
+            if (existingReportDataOpt.isPresent()) {
+                // 이미 존재하는 ReportData를 덮어쓰기
+                ReportData existingReportData = existingReportDataOpt.get();
+                existingReportData.updateWith(reportData);
+            } else {
+                // 새로운 ReportData 추가
+                reportDataList.add(reportData);
+            }
             forResult.add(reportData);
         }
 
         // 남은 센서데이터 저장
-        sensorFileReport.setSensorDataList(remainSensorDataList);
-        temporalSensorFileReportRepository.save(sensorFileReport);
+//        sensorFileReport.setSensorDataList(remainSensorDataList);
+//        temporalSensorFileReportRepository.save(sensorFileReport);
 
         // 데이터 정렬
         Collections.sort(reportDataList, new Comparator<ReportData>() {

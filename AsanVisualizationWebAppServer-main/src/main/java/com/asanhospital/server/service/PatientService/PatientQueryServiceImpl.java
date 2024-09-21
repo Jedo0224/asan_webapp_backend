@@ -56,6 +56,9 @@ public class PatientQueryServiceImpl implements PatientQueryService {
         if(searchConditions.getBirthDate() != null){
             query.addCriteria(Criteria.where("dateOfBirth").is(searchConditions.getBirthDate()));
         }
+        if(searchConditions.getDeviceName() != null){
+            query.addCriteria(Criteria.where("deviceName").is(searchConditions.getDeviceName()));
+        }
         if(searchConditions.getStartDate() != null)
         {
             query.addCriteria(Criteria.where("startDate").is(searchConditions.getStartDate()));
@@ -123,6 +126,9 @@ public class PatientQueryServiceImpl implements PatientQueryService {
         }
         if(updatePatientDto.getFormFactorNumber() != null){
             update.set("formFactorNumber", updatePatientDto.getFormFactorNumber());
+        }
+        if(updatePatientDto.getDeviceName() != null){
+            update.set("deviceName", updatePatientDto.getDeviceName());
         }
         if(updatePatientDto.getGuardianName() != null){
             update.set("guardianName", updatePatientDto.getGuardianName());

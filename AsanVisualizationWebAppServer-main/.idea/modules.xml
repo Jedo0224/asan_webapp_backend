@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AsanVisualizationWebAppServer-main.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AsanVisualizationWebAppServer-main.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AsanVisualizationWebAppServer-main.test.iml" filepath="$PROJECT_DIR$/.idea/modules/AsanVisualizationWebAppServer-main.test.iml" />
     </modules>
   </component>
 </project>

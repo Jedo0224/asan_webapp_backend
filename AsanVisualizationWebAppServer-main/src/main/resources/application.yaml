@@ -4,10 +4,17 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
   data:
+    redis:
+      port: 6379
+      host: host.docker.internal
+#      host: localhost
+
     mongodb:
-      uri: mongodb://host.docker.internal:27018
+#      uri: mongodb://admin:25419789@localhost:27018
+      uri: mongodb://admin:qkrwotjr0@host.docker.internal:27018
       authentication-database: admin
       database: asanVisualization
+
 
 jwt:
   secret: 56e010f802a604cee43b937a8c989d0a2c50a22503b890a1c0634fc89a9ebe84
@@ -15,3 +22,8 @@ jwt:
 
 
 
+sms:
+  api-key: NCSDL2G7KTUMG5OI
+  api-secret-key: WLJLQQVUH44CX6WBTMOAUG1M4J1XVMXJ
+  domain : https://api.coolsms.co.kr
+  from-number : 01086128138

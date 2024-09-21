@@ -2,6 +2,7 @@ package com.asanhospital.server.dto.Patient;
 
 import com.asanhospital.enums.Gender;
 import com.asanhospital.server.domain.Patient;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -48,6 +49,12 @@ public class PatientResponse {
         @NotNull
         private String formFactorNumber;      // 폼팩터 넘버
 
+        private String deviceId;
+
+        private String deviceName;
+
+        private  Integer disconnectCount;
+
         // 보호자 정보
         @NotNull
         private String guardianName;          // 이름(보호자)
@@ -88,6 +95,8 @@ public class PatientResponse {
                 .phoneNumber(patient.getPhoneNumber())
                 .address(patient.getAddress())
                 .formFactorNumber(patient.getFormFactorNumber())
+                    .deviceId(patient.getDeviceId())
+                    .deviceName(patient.getDeviceName())
                 .guardianName(patient.getGuardianName())
                 .guardianRelationship(patient.getGuardianRelationship())
                 .guardianPhoneNumber(patient.getGuardianPhoneNumber())
@@ -136,6 +145,7 @@ public class PatientResponse {
         private Long remainingDays;            //남은기간
         private String deviceId;
         private String deviceName;
+        private Integer disconnectCount;
 
 
         static public PatientMainInfoDTO toDto(Patient patient) {
@@ -154,6 +164,7 @@ public class PatientResponse {
                 .remainingDays(remainingDays)
                 .deviceId(patient.getDeviceId())
                 .deviceName(patient.getDeviceName())
+                .disconnectCount((patient.getDisconnectionCount()))
                 .build();
         }
     }

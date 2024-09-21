@@ -1,25 +1,19 @@
 package com.asanhospital.server.service.PatientService;
 
-import com.asanhospital.server.apiPayload.ApiResponse;
 import com.asanhospital.server.apiPayload.excpetion.GeneralException;
 import com.asanhospital.server.apiPayload.status.ErrorStatus;
-import com.asanhospital.server.domain.Manager;
-import com.asanhospital.server.domain.Patient;
-import com.asanhospital.server.dto.Manager.ManagerRequest;
-import com.asanhospital.server.dto.Manager.ManagerResponse;
+import com.asanhospital.server.domain.*;
+import com.asanhospital.server.dto.Mobile.PatientDTO;
+import com.asanhospital.server.dto.Patient.ConnectionLogDTO;
 import com.asanhospital.server.dto.Patient.PatientRequest;
 import com.asanhospital.server.dto.Patient.PatientResponse;
-import com.asanhospital.server.repository.ManagerRepository;
-import com.asanhospital.server.repository.PatientRepository;
-import com.asanhospital.server.service.ManagerService.ManagerCommandService;
+import com.asanhospital.server.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -27,6 +21,12 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class PatientCommandServiceImpl implements PatientCommandService {
     private final PatientRepository patientRepository;
+    private final ConnectionLogRepository connectionLogRepository;
+    private final PatientReportRepository patientReportRepository;
+    private final SensorFileReportRepository sensorFileReportRepository;
+
+
+
 
     @Override
     @Transactional
@@ -91,20 +91,67 @@ public class PatientCommandServiceImpl implements PatientCommandService {
 
     @Override
     public PatientResponse.DeletePatientDTO deletePatient(PatientRequest.DeletePatientDto patientIds){
-        List<Patient> deletList = new ArrayList<>();
+        List<Patient> deletPatientList = new ArrayList<>();
+        List<SensorFileReport> deletSensorFileList = new ArrayList<>();
+        List<PatientReport> deletPatientReportList = new ArrayList<>();
+        List<ConnectionLog> deleteLogList = new ArrayList<>();
 
         for(String id : patientIds.getMedicalRecordNumbers()){
             Patient patient = patientRepository.findBymedicalRecordNumber(id);
+            Optional<SensorFileReport> sensorFileReport = sensorFileReportRepository.findByMedicalRecordNumber(id);
+            Optional<PatientReport> patientReport = patientReportRepository.findByMedicalRecordNumber(id);
+            Optional<ConnectionLog> ConnectionLog = connectionLogRepository.findByMedicalRecordNumber(id);
+
+
+
             if(patient == null){
                 throw new GeneralException(ErrorStatus._MEMBER_NOT_FOUND);
             }
-            deletList.add(patient);
+            deletPatientList.add(patient);
+            sensorFileReport.ifPresent(deletSensorFileList::add);
+            patientReport.ifPresent(deletPatientReportList::add);
+            ConnectionLog.ifPresent(deleteLogList::add);
+
         }
 
-        patientRepository.deleteAll(deletList);
+        patientRepository.deleteAll(deletPatientList);
+        sensorFileReportRepository.deleteAll(deletSensorFileList);
+        patientReportRepository.deleteAll(deletPatientReportList);
+        connectionLogRepository.deleteAll(deleteLogList);
+
+
 
         return PatientResponse.DeletePatientDTO.builder()
             .medicalRecordNumbers(patientIds.getMedicalRecordNumbers())
             .build();
+    }
+
+    @Override
+    public ConnectionLogDTO getConnectionLogList(String medicalRecordNumber) {
+
+        Optional<ConnectionLog> logList = connectionLogRepository.findByMedicalRecordNumber(medicalRecordNumber);
+
+        ConnectionLogDTO connectionLogDTO = null;
+        if (logList.isPresent()) {
+            connectionLogDTO = ConnectionLogDTO.builder()
+                    .connectionLogList(logList.get().getConnectionLogList())
+                    .disconnectionLogList(logList.get().getDisconnectionLogList()).build();
+
+        }
+
+        return connectionLogDTO;
+    }
+
+    @Override
+    public List<PatientDTO> getPatientList() {
+        List<Patient> patientList = patientRepository.findAll();
+
+        List<PatientDTO> patientDtoList = new ArrayList<>();
+        for(Patient patient : patientList){
+            PatientDTO patientDTO = PatientDTO.builder().deviceId(patient.getDeviceId()).deviceName(patient.getDeviceName()).medicalRecordNumber(patient.getMedicalRecordNumber()).build();
+            patientDtoList.add(patientDTO);
+        }
+
+        return  patientDtoList;
     }
 }

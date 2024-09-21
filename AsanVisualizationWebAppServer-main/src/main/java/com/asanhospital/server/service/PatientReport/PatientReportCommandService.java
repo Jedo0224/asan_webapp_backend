@@ -17,7 +17,7 @@ public interface PatientReportCommandService {
     서버시간으로 당일의 데이터는 생성하지 않고 센서데이터 DB에 저장해두고 다음 입력때 생성한다.
      */
 
-    PatientReportResponse.PatientReportDTO sensorFileToPatientReport(String medicalRecordNumber, List<SensorData> datas);
+    PatientReportResponse.PatientReportDTO sensorFileToPatientReport(String deviceName, List<SensorData> datas);
 
     List<String[]> makePatientReportCSVFile(Manager manager, String medicalRecordNumber);
 }

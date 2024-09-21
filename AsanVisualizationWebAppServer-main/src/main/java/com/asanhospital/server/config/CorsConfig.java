@@ -16,6 +16,9 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://192.168.0.27:8081");
 	    config.addAllowedOrigin("http://localhost:8081");
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://192.168.45.177:3000");
 	    config.addAllowedOrigin("http://121.184.192.5:8081");
         config.addAllowedHeader("*");
         config.setAllowedMethods(

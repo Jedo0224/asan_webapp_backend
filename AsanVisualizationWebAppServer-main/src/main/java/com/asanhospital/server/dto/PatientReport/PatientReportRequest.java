@@ -17,6 +17,7 @@ public class PatientReportRequest {
     @AllArgsConstructor
     public static class AddPatientReportDTO{
         private String medicalRecordNumber;
+        private String deviceName;
         private List<ReportData> reportDataList;
     }
 

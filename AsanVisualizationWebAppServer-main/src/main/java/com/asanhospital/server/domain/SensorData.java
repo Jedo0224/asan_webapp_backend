@@ -22,6 +22,12 @@ public class SensorData {
     private Integer rating;
     private Boolean wear;
 
+    public static LocalDateTime createWithKST(LocalDateTime utcDateTime) {
+        ZonedDateTime utcZonedDateTime = utcDateTime.atZone(ZoneId.of("UTC"));
+        ZonedDateTime kstZonedDateTime = utcZonedDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        return kstZonedDateTime.toLocalDateTime();
+    }
+
     public LocalDate getLocalDate(){
         return dateTime.toLocalDate();
     }

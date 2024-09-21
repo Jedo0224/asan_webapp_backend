@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileCommandService {
     SensorFileResponse.SensorFileDTO getPatientSensorData(Manager manager, String medicalRecordNumber);
-    List<SensorData> saveSensorFileReportData(Manager manager, String medicalRecordNumber, MultipartFile file);
+    List<SensorData> saveSensorFileReportData( String medicalRecordNumber, MultipartFile file);
     SensorFileResponse.DeleteSensorDataDTO deleteSensorData(Manager manager, SensorFileRequest.DeleteSensorDataDTO medicalRecordNumber);
 
     List<String[]> makeSensorCSVFile(Manager manager, String medicalRecordNumber);
